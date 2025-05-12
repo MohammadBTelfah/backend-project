@@ -2,11 +2,13 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const SECRET_KEY = process.env.SECRET_KEY;
 
-const authMiddleware = (roles) => (req, res, next) => {
+/**
+ * Middleware to restrict access to admin users only
+ */
+const adminMiddleware = (req, res, next) => {
   const token = req.header('Authorization');
 
   if (!token) {
-    console.log("No token provided");
     return res.status(401).json({ msg: 'No token, authorization denied' });
   }
 
@@ -15,16 +17,18 @@ const authMiddleware = (roles) => (req, res, next) => {
     const tokenValue = token.split(' ')[1];
     console.log("Received Token:", tokenValue);
 
+    // Verify the token
     const decoded = jwt.verify(tokenValue, SECRET_KEY);
     console.log("Decoded Payload:", decoded);
 
-    req.user = decoded;
-
-    if (!roles.includes(decoded.role)) {
-      console.log(`Access Denied: Expected roles - ${role}, User role - ${decoded.role}`);
-      return res.status(403).json({ msg: 'Access denied' });
+    // Check if the role is "admin"
+    if (decoded.role !== 'admin') {
+      console.log(`Access Denied: User role is "${decoded.role}"`);
+      return res.status(403).json({ msg: 'Access denied, admin only' });
     }
 
+    // Attach user information to the request
+    req.user = decoded;
     next();
   } catch (err) {
     console.error("JWT Verification Error:", err.message);
@@ -32,4 +36,4 @@ const authMiddleware = (roles) => (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+module.exports = adminMiddleware;

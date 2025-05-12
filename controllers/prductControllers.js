@@ -44,3 +44,18 @@ try {
     
 }
 }
+
+
+//function to   update product by name
+exports.updateProductByName = async (req, res) => {
+    const { Name } = req.params;
+    const { Description, Price, Image } = req.body;
+    try {
+        const updatedProduct = await product.findOneAndUpdate({ Name: Name }, { Description, Price, Image }, { new: true });
+        res.status(200).json({ updatedProduct, Message: 'Product updated successfully' });
+        
+    } catch (error) {
+        res.status(500).json({ Message: error.Message });
+        
+    }
+}
