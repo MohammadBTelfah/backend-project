@@ -1,0 +1,96 @@
+:root {
+    --primary: #0066cc;
+    --primary-foreground: #ffffff;
+    --secondary: #6c757d;
+    --secondary-foreground: #ffffff;
+    --accent: #17a2b8;
+    --accent-foreground: #ffffff;
+    --background: #ffffff;
+    --foreground: #000000;
+    --card: #ffffff;
+    --card-foreground: #000000;
+    --border: #dee2e6;
+    --input: #ced4da;
+    --ring: #0066cc;
+    --radius: 0.5rem;
+    --font-family: 'Inter', sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
+}
+
+.hero-section {
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1441986300917-64674bd600d8');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.product-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: transform 0.3s, box-shadow 0.3s;
+    height: 100%;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.product-card img {
+    height: 200px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.price {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.color-dot {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.specs, .compatibility {
+    font-size: 0.9rem;
+    color: var(--secondary);
+    margin-bottom: 1rem;
+}
+
+.newsletter-form .input-group {
+    max-width: 500px;
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        text-align: center;
+    }
+    
+    .product-card img {
+        height: 180px;
+    }
+}
