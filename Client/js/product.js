@@ -46,7 +46,7 @@ async function getAllProducts() {
                 </div>
                 <div class="d-flex justify-content-center gap-2 mt-2">
                     <button class="btn btn-danger" onclick="deleteProduct('${product._id}')">Delete</button>
-                    <button class="btn btn-warning" onclick="updateProduct('${product._id}', UPDATE_PRODUCT_URI)">Update</button>
+                    <button class="btn btn-warning" onclick="updateForm('${product._id}', UPDATE_PRODUCT_URI)">Update</button>
                 </div>
             </div>
         </div>
@@ -95,66 +95,33 @@ async function deleteProduct(productId) {
     }
 }
 // Function to update a product
-async function updateProduct(productId, UPDATE_PRODUCT_URI) {
-    try {
-        const response = await fetch(`${UPDATE_PRODUCT_URI}/${productId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
-
-        const product = await response.json();
-
-        document.getElementById("updateProductName").value = product.Name;
-        document.getElementById("updateProductDescription").value = product.Description;
-        document.getElementById("updateProductPrice").value = product.Price;
-        document.getElementById("updateProductImage").value = product.Image;
-
-        const updateModal = new bootstrap.Modal(document.getElementById("updateProductModal"));
-        updateModal.show();
-
-        document.getElementById("updateProductForm").onsubmit = async (event) => {
-            event.preventDefault();
-
-            const updatedProduct = {
-                Name: document.getElementById("updateProductName").value,
-                Description: document.getElementById("updateProductDescription").value,
-                Price: parseFloat(document.getElementById("updateProductPrice").value),
-                Image: document.getElementById("updateProductImage").value
-            };
-
-            try {
-                const updateResponse = await fetch(`${UPDATE_PRODUCT_URI}/${productId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(updatedProduct)
-                });
-
-                if (!updateResponse.ok) {
-                    throw new Error(`Error: ${updateResponse.status} - ${updateResponse.statusText}`);
-                }
-
-                alert("Product updated successfully");
-                updateModal.hide();
-                getAllProducts();
-
-            } catch (error) {
-                console.error("Error updating product:", error);
-                alert("Failed to update product. Please try again later.");
-            }
-        };
-
-    } catch (error) {
-        console.error("Error fetching product details:", error);
-        alert("Failed to load product details. Please try again later.");
+const updateForm = document.getElementById("update");
+updateForm.onsubmit = async (e) => {
+    e.preventDefault();
+    console.log("updated product",productId,updateProductName.value,updateProductDescription.value,updateProductPrice.value,updateProductImage.value);
+try {
+    const response = await fetch(`${UPDATE_PRODUCT_URI}/${productId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            Name: updateProductName.value,
+            Description: updateProductDescription.value,
+            Price: updateProductPrice.value,
+            Image: updateProductImage.value
+        })
+    });
+    const data = await response.json();
+    if(response.ok && data.message === "Product updated successfully") {
+        alert("Product updated successfully");
+        getAllProducts(); // Refresh the product list
     }
-}
+    else {
+        alert("Failed to update product. Please try again later.");
+    }
+} catch (error) {
+    console.error("Error updating product:", error);
+    alert("Failed to update product. Please try again later.");
+}}
