@@ -1,6 +1,6 @@
 API_URI="http://localhost:5050/api/products"
 CREATE_PRODUCT_URI="http://localhost:5050/api/addproduct"
-UPDATE_PRODUCT_URI="http://localhost:5050/api/updateproduct"
+UPDATE_PRODUCT_URI="http://localhost:5050/api/getproductbyid"
 DELETE_PRODUCT_URI="http://localhost:5050/api/deleteproduct"
 const token = sessionStorage.getItem("token");
 if (!token) {

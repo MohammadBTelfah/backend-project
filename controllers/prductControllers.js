@@ -59,3 +59,16 @@ exports.updateProductByName = async (req, res) => {
         
     }
 }
+// get porduct by id (for update modale)
+exports.getProductById = async (req, res) => {
+   const{id} = req.params;
+    try {
+        const foubdProduct = await product.findById(id);
+        if (!foubdProduct) {
+            return res.status(404).json({ Message: 'Product not found' });
+        }
+        res.status(200).json({ foubdProduct });
+    } catch (error) {
+        res.status(500).json({ Message: error.Message });
+    }
+}
