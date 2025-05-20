@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const adminMiddleware = require('../MiddleWare/AdminMiddleWare');
-const { getAllProducts, addProduct, updateProduct, deleteProduct,updateProductByName,getProductById  } = require('../controllers/prductControllers');
+const { getAllProducts, addProduct, updateProduct, deleteProduct,updateProductByName,getProductById  } = require('../controllers/productControllers');
 
 router.get('/products',  getAllProducts);
 router.post('/addproduct', adminMiddleware,  addProduct);
