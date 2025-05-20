@@ -80,41 +80,41 @@
     
         <!-- Button trigger modal -->
   
-  <div class="modal fade" id="updateProductModal" tabindex="-1" role="dialog" aria-labelledby="updateProductModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <!-- Update Product Modal -->
+<div class="modal fade" id="updateProductModal" tabindex="-1" aria-labelledby="updateProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="updateProductModalLabel">Update Product</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="update">
+        <form id="updateProductForm">
+          <input type="hidden" id="updateProductId">
           <div class="mb-3">
-              <label for="updateProductName" class="form-label">Product Name</label>
-              <input type="text" class="form-control" id="updateProductName" required>
+            <label for="updateProductName" class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="updateProductName" required>
           </div>
           <div class="mb-3">
-              <label for="updateProductDescription" class="form-label">Description</label>
-              <input type="text" class="form-control" id="updateProductDescription" required>
+            <label for="updateProductDescription" class="form-label">Description</label>
+            <input type="text" class="form-control" id="updateProductDescription" required>
           </div>
           <div class="mb-3">
-              <label for="updateProductPrice" class="form-label">Price</label>
-              <input type="number" class="form-control" id="updateProductPrice" required>
+            <label for="updateProductPrice" class="form-label">Price</label>
+            <input type="number" class="form-control" id="updateProductPrice" required>
           </div>
           <div class="mb-3">
-              <label for="updateProductImage" class="form-label">Image URL</label>
-              <input type="text" class="form-control" id="updateProductImage" required>
+            <label for="updateProductImage" class="form-label">Image URL</label>
+            <input type="text" class="form-control" id="updateProductImage" required>
           </div>
-          <div class="mb-3">
-              <input type="submit" class="btn btn-primary w-100" value="Update Product">
+          <div class="mb-3 text-end">
+            <button type="submit" class="btn btn-primary">Update Product</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
-
-
 
 </section>
 

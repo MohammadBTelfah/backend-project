@@ -2,7 +2,7 @@
 
 const API_URI = "http://localhost:5050/api/products";
 const CREATE_PRODUCT_URI = "http://localhost:5050/api/addproduct";
-const UPDATE_PRODUCT_URI = "http://localhost:5050/api/getproductbyid";
+const UPDATE_PRODUCT_URI = "http://localhost:5050/api/updateproduct";
 const DELETE_PRODUCT_URI = "http://localhost:5050/api/deleteproduct";
 
 const token = sessionStorage.getItem("token");
@@ -49,7 +49,7 @@ async function getAllProducts() {
                         ${role === 'admin' ? `
                         <div class="d-flex justify-content-center gap-2 mt-2">
                             <button class="btn btn-danger" onclick="deleteProduct('${product._id}')">Delete</button>
-                            <button class="btn btn-warning" onclick="fillUpdateForm('${product._id}')">Update</button>
+                            <button class="btn btn-warning" onclick='openUpdateModal(${JSON.stringify(product)})'>Update</button>
                         </div>
                         ` : ''}
                     </div>
@@ -117,10 +117,6 @@ async function fillUpdateForm(productId) {
     }
 }
 
-// ✅ تحديث المنتج  
-
-
-
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -176,3 +172,51 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+function openUpdateModal(product) {
+    // تعبئة البيانات
+    document.getElementById('updateProductId').value = product._id;
+    document.getElementById('updateProductName').value = product.Name;
+    document.getElementById('updateProductDescription').value = product.Description;
+    document.getElementById('updateProductPrice').value = product.Price;
+    document.getElementById('updateProductImage').value = product.Image;
+
+    // فتح المودال
+    const modal = new bootstrap.Modal(document.getElementById('updateProductModal'));
+modal.show();
+
+}
+document.getElementById("updateProductForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const id = document.getElementById("updateProductId").value;
+    const Name = document.getElementById("updateProductName").value;
+    const Description = document.getElementById("updateProductDescription").value;
+    const Price = document.getElementById("updateProductPrice").value;
+    const Image = document.getElementById("updateProductImage").value;
+
+    try {
+        const response = await fetch(`${UPDATE_PRODUCT_URI}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ Name, Description, Price, Image })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.message === "Product updated successfully") {
+            alert("✅ Product updated successfully");
+            getAllProducts();
+            bootstrap.Modal.getInstance(document.getElementById('updateProductModal')).hide();
+        } else {
+            alert("❌ Failed to update product");
+        }
+    } catch (error) {
+        console.error("Update error:", error);
+        alert("❌ Error updating product.");
+    }
+});
+
