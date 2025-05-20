@@ -4,7 +4,9 @@ const Product = require('../models/product');
 exports.getAllProducts = async (req, res) => {
   try {
     const products = await Product.find();
-    res.status(200).json(products);
+    role = req.user.role;
+    console.log("User Role:", role);
+  res.status(200).json({products , role});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -12,9 +14,9 @@ exports.getAllProducts = async (req, res) => {
 
 // ✅ Add a new product
 exports.addProduct = async (req, res) => {
-  const { name, description, price, image } = req.body;
+  const { Name, Description, Price, Image } = req.body;
   try {
-    const newProduct = new Product({ name, description, price, image });
+    const newProduct = new Product({ Name, Description, Price, Image });
     await newProduct.save();
     res.status(201).json({ message: 'Product added successfully', newProduct });
   } catch (error) {
@@ -25,11 +27,11 @@ exports.addProduct = async (req, res) => {
 // ✅ Update product by ID
 exports.updateProduct = async (req, res) => {
   const { id } = req.params;
-  const { name, description, price, image } = req.body;
+  const { Name, Description, Price, Image } = req.body;
   try {
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
-      { name, description, price, image },
+      { Name, Description, Price, Image },
       { new: true }
     );
     res.status(200).json({ message: 'Product updated successfully', updatedProduct });

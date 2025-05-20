@@ -1,9 +1,9 @@
 // product.js
 
 const API_URI = "http://localhost:5050/api/products";
-const CREATE_PRODUCT_URI = "http://localhost:5050/api/products";
-const UPDATE_PRODUCT_URI = "http://localhost:5050/api/products";
-const DELETE_PRODUCT_URI = "http://localhost:5050/api/products";
+const CREATE_PRODUCT_URI = "http://localhost:5050/api/addproduct";
+const UPDATE_PRODUCT_URI = "http://localhost:5050/api/getproductbyid";
+const DELETE_PRODUCT_URI = "http://localhost:5050/api/deleteproduct";
 
 const token = sessionStorage.getItem("token");
 const role = sessionStorage.getItem("role");
@@ -22,21 +22,26 @@ async function getAllProducts() {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+
             }
         });
 
         if (!response.ok) throw new Error(`Error: ${response.status}`);
 
         const products = await response.json();
+        console.log("Products:", products);
+        const role = products.role;
+        //console.log("User Role:", role);
 
-        const html = products.map(product => `
+        const html = products.products.map(product => `
             <div class="col">
                 <div class="card h-100">
-                    <img src="${product.image}" class="card-img-top" alt="${product.name}">
+                    <img src="${product.Image}" class="card-img-top" alt="${product.Name}">
                     <div class="card-body text-center">
-                        <h5 class="card-title">${product.name}</h5>
-                        <p>${product.description}</p>
-                        <p><strong>$${product.price}</strong></p>
+                        <h5 class="card-title">${product.Name}</h5>
+                        <p>${product.Description}</p>
+                        <p><strong>$${product.Price}</strong></p>
                         <div class="d-flex justify-content-center gap-2 mt-3">
                             <button class="btn btn-outline-primary" onclick="compareProduct('${product._id}')">Compare</button>
                             <button class="btn btn-primary" onclick="addToCart('${product._id}')">Add to Cart</button>
@@ -64,25 +69,28 @@ getAllProducts();
 
 // ✅ حذف المنتج
 async function deleteProduct(productId) {
-    const confirmation = confirm("Are you sure you want to delete this product?");
-    if (!confirmation) return;
+    if (confirm("Are you sure you want to delete this product?")) {
+        try {
+            const response = await fetch(`${DELETE_PRODUCT_URI}/${productId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
 
-    try {
-        const response = await fetch(`${DELETE_PRODUCT_URI}/${productId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+            const data = await response.json();
+
+            if (response.ok && data.message == "Product deleted successfully") {
+                alert("Product deleted successfully");
+                getAllProducts();
+            } else {
+                alert("Delete failed");
             }
-        });
-
-        if (!response.ok) throw new Error("Delete failed");
-
-        alert("Product deleted successfully");
-        getAllProducts();
-    } catch (error) {
-        console.error("Error deleting product:", error);
-        alert("Failed to delete product.");
+        } catch (error) {
+            console.error("Delete error:", error);
+            alert("Failed to delete product.");
+        }
     }
 }
 
@@ -109,38 +117,62 @@ async function fillUpdateForm(productId) {
     }
 }
 
-// ✅ تحديث المنتج
-const updateForm = document.getElementById("update");
-updateForm.onsubmit = async (e) => {
-    e.preventDefault();
+// ✅ تحديث المنتج  
 
-    const productId = document.getElementById("updateProductId").value;
 
-    try {
-        const response = await fetch(`${UPDATE_PRODUCT_URI}/${productId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                name: document.getElementById("updateProductName").value,
-                description: document.getElementById("updateProductDescription").value,
-                price: document.getElementById("updateProductPrice").value,
-                image: document.getElementById("updateProductImage").value
-            })
-        });
 
-        const data = await response.json();
 
-        if (response.ok && data.message === "Product updated successfully") {
-            alert("Product updated successfully");
-            getAllProducts();
-        } else {
-            alert("Update failed");
+
+document.addEventListener("DOMContentLoaded", () => {
+    const token = sessionStorage.getItem("token");
+    const role = sessionStorage.getItem("role"); // ✅ استخدم sessionStorage
+    const addProductSection = document.getElementById("add-product-section");
+
+    console.log("ROLE from sessionStorage:", role); // لتتبع القيمة في الكونسول
+
+    if (role === "admin") {
+        console.log("✅ Admin detected, showing form.");
+        if (addProductSection) {
+            addProductSection.style.display = "block";
         }
-    } catch (error) {
-        console.error("Update error:", error);
-        alert("Failed to update product.");
+    } else {
+        console.log("⛔ Not admin, hiding form.");
     }
-}
+
+    // ✅ Event listener for the add product form
+    const addForm = document.getElementById("add-product-form");
+    if (addForm) {
+        addForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const Name = document.getElementById("addProductName").value;
+            const Price = document.getElementById("addProductPrice").value;
+            const Description = document.getElementById("addProductDescription").value;
+            const Image = document.getElementById("addProductImage").value;
+
+            try {
+                const response = await fetch("http://localhost:5050/api/addproduct", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ Name, Price, Description, Image })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.message === "Product added successfully") {
+                    alert("✅ Product added successfully!");
+                    addForm.reset();
+                    getAllProducts();
+                } else {
+                    alert("❌ Failed to add product: " + (data.message || "Unknown error"));
+                }
+            } catch (error) {
+                console.error("Add product error:", error);
+                alert("Something went wrong. Please try again.");
+            }
+        });
+    }
+});

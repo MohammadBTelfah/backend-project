@@ -19,6 +19,7 @@ loginForm.addEventListener("submit", async function (event) {
         if(data.Message =="User logged in successfully"){
             alert("User logged in successfully");
             sessionStorage.setItem("token", data.token);
+            sessionStorage.setItem("role", data.role);
             window.location.href = "home.html";
         }
         else{
