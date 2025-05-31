@@ -32,6 +32,7 @@ async function getAllProducts() {
         const products = await response.json();
         console.log("Products:", products);
         const role = products.role;
+        sessionStorage.setItem("role", role); // ✅ حفظ الدور في sessionStorage
         //console.log("User Role:", role);
 
         const html = products.products.map(product => `
